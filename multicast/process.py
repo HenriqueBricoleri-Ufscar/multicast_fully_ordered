@@ -83,7 +83,8 @@ class Process:
             self._receive_ack(packet)
 
     def _receive_data(self, message: DataMessage) -> None:
-        self.receive_tick(message.timestamp)
+        # corrigindo duplo incremento
+        current_clock = self.receive_tick(message.timestamp)
 
         print(
             f"[t={self.network.time:02d}] {self.pid} received "
@@ -109,7 +110,7 @@ class Process:
 
         ack = AckMessage(
             msg_id=message.msg_id,
-            timestamp=ack_timestamp,
+            timestamp=current_clock,
             sender=self.pid,
         )
 
