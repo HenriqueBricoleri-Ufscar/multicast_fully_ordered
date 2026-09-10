@@ -25,9 +25,7 @@ class Network:
         self.time = 0
         self.counter = 0
 
-        self.latest_delivery: defaultdict[tuple[str, str], int] = defaultdict(
-            lambda: -1
-        )
+        self.latest_delivery: defaultdict[tuple[str, str], int] = defaultdict(lambda: -1)
 
         self.latency_function = (
             latency_function
@@ -61,8 +59,11 @@ class Network:
         )
 
     def multicast(self, sender: str, packet: Packet) -> None:
+        members = self.processes[sender].members
+        # DATA e ACKs circulam apenas entre os membros cadastrados do grupo.
         for receiver in self.processes:
-            self.send(sender, receiver, packet)
+            if receiver in members:
+                self.send(sender, receiver, packet)
 
     def run(self) -> None:
         while self.events:
